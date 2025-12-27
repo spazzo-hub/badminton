@@ -8,6 +8,8 @@ venusq2.resourcePath = resources;icons/40x40
 venusq2m.resourcePath = resources;icons/40x40
 venu2s.resourcePath = resources;icons/61x61
 venux1.resourcePath = resources;icons/65x65
+venu441mm.resourcePath = resources;icons/54x54
+venu445mm.resourcePath = resources;icons/65x65
 
 vivoactive3m.resourcePath = resources;icons/40x33
 vivoactive3mlte.resourcePath = resources;icons/40x33
@@ -39,6 +41,7 @@ fenix7xpro.resourcePath = resources;icons/40x40
 fenix7xpronowifi.resourcePath = resources;icons/40x40
 fenix843mm.resourcePath = resources;icons/60x60
 fenix847mm.resourcePath = resources;icons/65x65
+fenix8pro47mm.resourcePath = resources;icons/65x65
 fenix8solar47mm.resourcePath = resources;icons/40x40
 fenix8solar51mm.resourcePath = resources;icons/40x40
 
