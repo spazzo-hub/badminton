@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.12.0
+- Add support for Fenix 8 pro
+- Add support for Venu 4 (41 and 45mm)
+
 ## 4.11.0
 - Add support for Descent G1
 - Add support for Descent G2
