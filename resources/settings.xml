@@ -50,4 +50,9 @@
 	<setting propertyKey="@Properties.enable_alert_heart_rate_zone_5" title="@Strings.settings_enable_alert_heart_rate_zone_5">
 		<settingConfig type="boolean" />
 	</setting>
+
+	<setting propertyKey="@Properties.enable_inactivity_reminder" title="@Strings.settings_enable_inactivity_reminder">
+		<settingConfig type="boolean" />
+	</setting>
+	
 </settings>
