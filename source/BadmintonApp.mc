@@ -17,6 +17,13 @@ class BadmintonApp extends Application.AppBase {
 	private var activityMonitor as Timer.Timer = new Timer.Timer();
 	private var lastHearRateAlert  as Moment? = null;
 
+	//remind the user that the match is still active if the score does not change for a while
+	//this can happen if the user forgets to end the match on the watch
+	const INACTIVITY_ALERT_SECONDS = 180; //3 minutes
+	private var inactivityMonitor as Timer.Timer = new Timer.Timer();
+	private var lastScoreChange as Moment? = null;
+	private var inactivityAlertSent as Boolean = false;
+
 	function initialize() {
 		AppBase.initialize();
 	}
@@ -68,9 +75,37 @@ class BadmintonApp extends Application.AppBase {
 		}
 	}
 
+	function monitorInactivity() as Void {
+		if(!inactivityAlertSent && lastScoreChange != null && (Time.now().subtract(lastScoreChange as Moment) as Duration).value() >= INACTIVITY_ALERT_SECONDS) {
+			//only vibrate once per period of inactivity; onScore() re-arms this the next time the score changes
+			inactivityAlertSent = true;
+			if(Attention has :vibrate) {
+				Attention.vibrate([new Attention.VibeProfile(50, 500)] as Array<VibeProfile>);
+			}
+		}
+	}
+
+	//called when a point is scored (or undone), to reset the inactivity reminder
+	function onScore() as Void {
+		lastScoreChange = Time.now();
+		inactivityAlertSent = false;
+	}
+
+	//called when the match is discarded (reset from the menu, exited, or abandoned before it starts), to stop the reminder
+	function onMatchDiscard() as Void {
+		if(Properties.getValue("enable_inactivity_reminder")) {
+			inactivityMonitor.stop();
+		}
+	}
+
 	function onMatchBegin() as Void {
 		if(Properties.getValue("enable_alert_heart_rate_zone_5")) {
 			activityMonitor.start(method(:monitorActivity), 1000, true);
+		}
+		if(Properties.getValue("enable_inactivity_reminder")) {
+			lastScoreChange = Time.now();
+			inactivityAlertSent = false;
+			inactivityMonitor.start(method(:monitorInactivity), 1000, true);
 		}
 		if(Attention has :playTone) {
 			if(Properties.getValue("enable_sound")) {
@@ -85,6 +120,9 @@ class BadmintonApp extends Application.AppBase {
 	function onMatchEnd(payload as Dictionary) as Void {
 		if(Properties.getValue("enable_alert_heart_rate_zone_5")) {
 			activityMonitor.stop();
+		}
+		if(Properties.getValue("enable_inactivity_reminder")) {
+			inactivityMonitor.stop();
 		}
 		var winner = payload["winner"];
 		if(winner != null && Attention has :playTone && Properties.getValue("enable_sound")) {
