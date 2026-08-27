@@ -116,6 +116,9 @@ class Match {
 
 	function discard() as Void {
 		session.discard();
+
+		//stop the inactivity reminder timer, if it was running
+		(Application.getApp() as BadmintonApp).getBus().dispatch(new BusEvent(:onMatchDiscard, null));
 	}
 
 	function end(winner_team as Team?) as Void {
@@ -206,6 +209,9 @@ class Match {
 		var set = getCurrentSet();
 		set.score(scorer);
 
+		//reset the inactivity reminder timer since the score just changed
+		(Application.getApp() as BadmintonApp).getBus().dispatch(new BusEvent(:onScore, null));
+
 		//end the set if it has been won
 		var set_winner = isSetWon(set);
 		if(set_winner != null) {
@@ -259,6 +265,8 @@ class Match {
 			ended = false;
 			winner = null;
 			set.undo();
+			//reset the inactivity reminder timer since the score just changed
+			(Application.getApp() as BadmintonApp).getBus().dispatch(new BusEvent(:onScore, null));
 		}
 	}
 
